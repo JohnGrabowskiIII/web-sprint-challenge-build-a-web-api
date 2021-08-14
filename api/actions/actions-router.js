@@ -7,7 +7,6 @@ const {insert, update, remove} = require('./actions-model');
 const {findActions, checkBody} = require('./actions-middlware');
 
 const {findProject} = require('../projects/projects-middleware');
-const { response } = require('../server');
 
 const router = express.Router();
 
