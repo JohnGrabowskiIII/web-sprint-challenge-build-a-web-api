@@ -4,7 +4,7 @@ const {get} = require('./projects-model')
 
 const findProject = (req, res, next) => {
 
-    const {id} = req.params;
+    const id = req.body.project_id || req.params.id;
 
     if (!id) {
         get()
@@ -18,16 +18,16 @@ const findProject = (req, res, next) => {
     } else {
         get(id)
         .then(resolve => {
-            req.project = resolve;
-            req.id = id;
-            next();
-        })
-        .catch(err => {
-            res.status(404).json({message: "project not found"})
-            next();
+            if (resolve) {
+                req.project = resolve;
+                req.id = id;
+                next();
+            } else {
+                res.status(404).json({message: "project not found"})
+            }
+
         })
     }
-
 }
 
 const checkBody = (req, res, next) => {

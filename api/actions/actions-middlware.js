@@ -3,7 +3,7 @@ const {get} = require('./actions-model');
 
 const findActions = (req, res, next) => {
 
-    const {id} = req.params;
+    const id = req.body.project_id || req.params.id;
 
     if (!id) {
         get()
@@ -31,6 +31,25 @@ const findActions = (req, res, next) => {
 
 }
 
+const checkBody = (req, res, next) => {
+
+    const {body} = req;
+
+    const checkId = !body.project_id || typeof body.project_id !== 'number' ? false : true; 
+
+    const checkDescription = !body.description || typeof body.description !== 'string' || body.description.length > 128 ? false : true;
+
+    const checkNotes = !body.notes || typeof body.notes !== 'string' ? false : true;
+
+    if (checkId && checkDescription && checkNotes) {
+        next();
+    } else {
+        res.status(400).json({message: "Post does not meet requirements"})
+    }
+
+}
+
 module.exports = {
-    findActions
+    findActions,
+    checkBody
 }
