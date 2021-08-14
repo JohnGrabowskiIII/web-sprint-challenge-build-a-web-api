@@ -85,8 +85,4 @@ router.get("/:id/actions", findProject, (req, res) => {
 
 })
 
-router.get('*', (req, res) => {
-    res.status(200).json({message: "projects router running"})
-})
-
 module.exports = router;
