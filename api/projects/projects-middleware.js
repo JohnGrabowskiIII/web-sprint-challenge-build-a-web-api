@@ -19,6 +19,7 @@ const findProject = (req, res, next) => {
         get(id)
         .then(resolve => {
             req.project = resolve;
+            req.id = id;
             next();
         })
         .catch(err => {
@@ -29,6 +30,21 @@ const findProject = (req, res, next) => {
 
 }
 
+const checkBody = (req, res, next) => {
+
+    const {body} = req;
+
+    if (!body.name ||
+        !body.description ||
+        typeof body.name !== 'string' ||
+        typeof body.description !== 'string') {
+            res.status(400).json({message: "Post does not meet requirements"})
+        } else {
+            next();
+        }
+}
+
 module.exports = {
-    findProject
+    findProject,
+    checkBody
 }

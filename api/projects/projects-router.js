@@ -1,8 +1,8 @@
 // Write your "projects" router here!
 
-const {get, insert, update, remove, getProjectActions} = require('./projects-model')
+const {insert, update, remove, getProjectActions} = require('./projects-model')
 
-const {findProject} = require('./projects-middleware')
+const {findProject, checkBody} = require('./projects-middleware')
 
 const express = require('express');
 
@@ -28,29 +28,61 @@ router.get("/:id", findProject, (req, res) => {
 
 })
 
-router.post("/", (req, res) => {
+router.post("/", checkBody, (req, res) => {
     
     const {body} = req;
 
-    if (!body.name ||
-        !body.description ||
-        typeof body.name !== 'string' ||
-        typeof body.description !== 'string') {
-            res.status(400).json({message: "Post does not meet requirements"})
-        } else {
-            insert(body)
-            .then(resolve => {
-                res.status(201).json(resolve)
-            })
-            .catch(err => {
-                res.status(500).json({message: "New project could not be submitted at this time"})
-            })
-        }
+    insert(body)
+    .then(resolve => {
+        res.status(201).json(resolve)
+    })
+    .catch(err => {
+        res.status(500).json({message: "New project could not be submitted at this time"})
+    })
 
 })
 
-router.put("/:id", findProject, (req, res) => {
+router.put("/:id", checkBody, findProject, (req, res) => {
     
+    const {body, id} = req;
+    console.log(id, body)
+
+    update(id, body)
+    .then(resolve => {
+        res.status(200).json(resolve)
+    })
+    .catch(err => {
+        res.status(500).json({message: "Project could not be updated at this time"})
+    })
+
+})
+
+router.delete("/:id", findProject, (req, res) => {
+
+    const {id} = req;
+
+    remove(id)
+    .then(resolve => {
+        res.status(200).json()
+    })
+    .catch(err => {
+        res.status(500).json({message: "Project could not be deleted at this time"})
+    })
+
+})
+
+router.get("/:id/actions", findProject, (req, res) => {
+
+    const {id} = req;
+
+    getProjectActions(id)
+    .then(resolve => {
+        res.status(200).json(resolve)
+    })
+    .catch(err => {
+        res.status(500).json({message: "Actions could not be retrieved at this time"})
+    })
+
 })
 
 router.get('*', (req, res) => {
