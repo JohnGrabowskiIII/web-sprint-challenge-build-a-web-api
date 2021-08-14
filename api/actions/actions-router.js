@@ -7,6 +7,7 @@ const {insert, update, remove} = require('./actions-model');
 const {findActions, checkBody} = require('./actions-middlware');
 
 const {findProject} = require('../projects/projects-middleware');
+const { response } = require('../server');
 
 const router = express.Router();
 
@@ -55,6 +56,20 @@ router.put("/:id", findActions, checkBody, (req, res) => {
     })
     .catch(err => {
         res.status(500).json({message: "Action could not be updated at this time"})
+    })
+
+})
+
+router.delete("/:id", findActions, (req, res) => {
+
+    const {id} = req.params;
+
+    remove(id)
+    .then(resolve => {
+        res.status(200).json()
+    })
+    .catch(err => {
+        res.status(500).json({message: "action could not be removed at this time"})
     })
 
 })
